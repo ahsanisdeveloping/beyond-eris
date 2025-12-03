@@ -1,18 +1,20 @@
-export default async function getProduct(id: string) {
+export default async function getProduct(id: string | number) {
   try {
-    const url = `https://fakestoreapi.com/products/${id}`;
-    const res = await fetch(url, { cache: "no-store" });
-    console.log(`[getProduct] fetch ${url} status=${res.status}`);
-    if (!res.ok) return null;
-    const ct = res.headers.get("content-type") || "";
-    if (!ct.includes("application/json")) {
-      const text = await res.text();
-      console.error(`[getProduct] non-json response for ${id} content-type=${ct} body=${text.slice(0,200)}`);
+    const res = await fetch(`https://fakestoreapi.com/products/${id}`, {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+      },
+      cache: "no-store"
+    });
+    
+    if (!res.ok) {
+      console.error(`[getProduct] fetch https://fakestoreapi.com/products/${id} status=${res.status}`);
       return null;
     }
-    return await res.json();
+    
+    return res.json();
   } catch (err) {
-    console.error(`[getProduct] error fetching ${id}:`, err);
+    console.error(`[getProduct] error fetching product ${id}:`, err);
     return null;
   }
 }

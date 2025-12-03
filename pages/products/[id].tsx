@@ -38,16 +38,15 @@ export default function ProductPage({ product }: { product: Product }) {
 
 export async function getStaticPaths() {
   try {
-    const res = await fetch("https://fakestoreapi.com/products", { cache: "no-store" });
+    const res = await fetch("https://fakestoreapi.com/products", {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+      },
+      cache: "no-store"
+    });
+    
     if (!res.ok) {
       console.error("Failed to fetch product list:", res.status, res.statusText);
-      return { paths: [], fallback: "blocking" };
-    }
-
-    const contentType = res.headers.get("content-type") || "";
-    if (!contentType.includes("application/json")) {
-      const text = await res.text();
-      console.error("Unexpected content-type when fetching product list:", contentType, text.slice(0, 1000));
       return { paths: [], fallback: "blocking" };
     }
 
